@@ -73,18 +73,27 @@ hire_date
 FROM employees
 WHERE hire_date BETWEEN '1985-12-31' and '1987-01-01';
 -----------------------------------------------------------------------------------------------------------------------------------------
---3. List the manager of each department with the following information: department number, department name, the manager's employee number, last name, first name, 
---and start and end employment dates.
+--3. List the manager of each department with the following information: department number, department name
+--the manager's employee number, last name, first name,and start and end employment dates.
+
 ALTER TABLE dept_manager
 	ADD CONSTRAINT fk_dept_manager_employees FOREIGN KEY (emp_no) REFERENCES employees(emp_no);
 
-SELECT dept_manager,dept_no
+ALTER dept_manager
+    ADD CONSTRAINT fk_dept_manager_departments FOREIGN KEY (dept_no) REFERENCES departments(dept_no);
+
+SELECT dept_manager.dept_no,
        departments.dept_name,
        dept_manager.emp_no,
        employees.last_name,
-       employees.first_name
-
-
+       employees.first_name,
+       dept_manager.from_date,
+       to_date
+FROM employees
+LEFT JOIN dept_manager
+ON employees.emp_no=dept_manager.emp_no
+RIGHT JOIN departments
+ON departments.dept_no=dept_manager.dept_no
 
 --4. List the department of each employee with the following information: employee number, last name, first name, and department name.
 
