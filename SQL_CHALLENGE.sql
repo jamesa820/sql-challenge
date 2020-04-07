@@ -79,7 +79,7 @@ WHERE hire_date BETWEEN '1985-12-31' and '1987-01-01';
 ALTER TABLE dept_manager
 	ADD CONSTRAINT fk_dept_manager_employees FOREIGN KEY (emp_no) REFERENCES employees(emp_no);
 
-ALTER dept_manager
+ALTER TABLE dept_manager
     ADD CONSTRAINT fk_dept_manager_departments FOREIGN KEY (dept_no) REFERENCES departments(dept_no);
 
 SELECT dept_manager.dept_no,
@@ -96,10 +96,47 @@ RIGHT JOIN departments
 ON departments.dept_no=dept_manager.dept_no
 
 --4. List the department of each employee with the following information: employee number, last name, first name, and department name.
+--employees.emp_no.last_name.first_name
+--(link emp_no)dept_emp.dept_no
+--(link by dept_no) for department.dept_name
+
+ALTER TABLE dept_emp
+	ADD CONSTRAINT fk_dept_emp_employees FOREIGN KEY (emp_no) REFERENCES employees(emp_no);
+
+ALTER TABLE dept_emp
+    ADD CONSTRAINT fk_dept_emp_departments FOREIGN KEY (dept_no) REFERENCES departments(dept_no);
+
+SELECT dept_emp.dept_no,
+       departments.dept_name,
+       dept_emp.emp_no,
+       employees.last_name,
+       employees.first_name,
+FROM employees
+LEFT JOIN dept_emp
+ON employees.emp_no=dept_emp.emp_no
+RIGHT JOIN departments
+ON departments.dept_no=dept_emp.dept_no
+
 
 --5. List all employees whose first name is "Hercules" and last names begin with "B."
 
+SELECT first_name,last_name
+FROM employees
+WHERE first_name = 'Hercules'
+AND last_name LIKE 'B%'
+
 --6. List all employees in the Sales department, including their employee number, last name, first name, and department name.
+
+SELECT departments.dept_name,
+       dept_emp.emp_no,
+       employees.last_name,
+       employees.first_name
+FROM employees
+LEFT JOIN dept_emp
+ON employees.emp_no=dept_emp.emp_no
+RIGHT JOIN departments
+ON departments.dept_no=dept_emp.dept_no
+WHERE dept_emp.dept_no = 'd007'
 
 --7. List all employees in the Sales and Development departments, including their employee number, last name, first name, and department name.
 
